@@ -1,8 +1,5 @@
-import time
-import schedule
 import requests
 from telegram.ext import Updater, CommandHandler, InlineQueryHandler, MessageHandler, CallbackContext
-import telegram
 import threading
 
 def get_url():
