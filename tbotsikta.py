@@ -27,15 +27,21 @@ def bop(update,context):
 
 
 def drinkwater(update,context):
-	msg = 'Hey baby, it has been 30 minutes, drink some water.'
+	msg = 'Well done, darling! I am proud of you! Keep going!'
 	chat_id = update.message.chat_id
 	context.bot.send_message(chat_id=chat_id,text=msg)
 
-#def startreminder(update: telegram.Update,context: CallbackContext):
+def drinkrem(context):
+	msg='Hey baby! Its been 30 minutes, drink some water.'
+	context.bot.send_message(chat_id=context.job.context,text=msg)
+
+def startreminder(update,context):
+	context.bot.send_message(chat_id=update.message.chat_id,text='Starting the reminder to run every 30 minutes.')
+	context.job_queue.run_repeating(drinkrem,1800,context=update.message.chat_id,first=0)
 
 
 def bae(update,context):
-	msg = "He's missing you! <3 Go text him : @sprshag"
+	msg = "I'm missing you! <3 Text me : @sprshag"
 	chat_id = update.message.chat_id
 	context.bot.send_message(chat_id=chat_id,text=msg)
 
@@ -61,18 +67,19 @@ def start(update,context):
 	context.bot.send_message(chat_id=chat_id,text=msg)
 
 def helpe(update,context):
-	msg = "Hey sweetheart. Here's a list of commands for you:\n/start : to check if the bot is running.\n/woof : to get a surprise.\n/drink : to remind yourself to do something important.\n/bae : to talk to your bae.\n/help : to see the commands list.\n/stop : to stop the bot.\n"
+	msg = "Hey sweetheart. Here's a list of commands for you:\n/start : to check if the bot is running.\n/reminder: to start/reset the reminder for something important.\n/woof : to get a surprise.\n/drank : if you drank a lot of water already.\n/bae : to talk to your bae.\n/help : to see the commands list.\n/stop : to stop the bot.\n"
 	chat_id = update.message.chat_id
 	context.bot.send_message(chat_id=chat_id,text=msg)
 
 def main():
 	dp = updater.dispatcher
 	dp.add_handler(CommandHandler('woof',bop))
-	dp.add_handler(CommandHandler('drink',drinkwater))
+	dp.add_handler(CommandHandler('drank',drinkwater))
 	dp.add_handler(CommandHandler('stop', stop))
 	dp.add_handler(CommandHandler('start', start))
 	dp.add_handler(CommandHandler('help', helpe))
 	dp.add_handler(CommandHandler('bae',bae))
+	dp.add_handler(CommandHandler('reminder',startreminder))
 	updater.start_polling()
 	updater.idle()
 	
