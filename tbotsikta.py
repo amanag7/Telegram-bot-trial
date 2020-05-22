@@ -38,7 +38,7 @@ def drinkwater():
 def main():
 	updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU')
 	dp = updater.dispatcher
-	dp.add_handler(CommandHamdler('woof',bop))
+	dp.add_handler(CommandHandler('woof',bop))
 	updater.start_polling()
 	updater.idle()
 	drinkwater()
