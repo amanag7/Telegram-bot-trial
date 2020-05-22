@@ -3,6 +3,7 @@ import schedule
 import requests
 from telegram.ext import Updater, CommandHandler
 import re
+import threading
 
 def get_url():
 	contents = requests.get('https://random.dog/woof.json').json()    
@@ -36,14 +37,23 @@ def drinkwater(bot,update):
 # 	schedule.run_pending()
 # 	time.sleep(1)
 
+def shutdown():
+	updater.stop()
+	updater.is_idle=False
+
+def stop(bot,update):
+	threading.Thread(target=shutdown).start()
+
 def main():
-	updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU')
 	dp = updater.dispatcher
 	dp.add_handler(CommandHandler('woof',bop))
 	dp.add_handler(CommandHandler('drink',drinkwater))
+	dp.add_handler(CommandHandler('stop', stop))
 	updater.start_polling()
 	updater.idle()
 	#drinkwater()
+
+updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU')
 
 if __name__=='__main__':
 	main()
