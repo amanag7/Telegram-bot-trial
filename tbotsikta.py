@@ -12,7 +12,6 @@ def get_url():
 
 def bop(bot,update):
 	url=get_url()
-	chat_id = update.message.chat_id
 	bot.send_photo(chat_id=chat_id, photo=url)
 
 # def Tbot_sendtext(bot_msg):
@@ -28,7 +27,6 @@ def bop(bot,update):
 
 def drinkwater(bot,update):
 	msg = 'Hey baby, it has been 30 minutes, drink some water.'
-	chat_id = update.message.chat_id
 	bot.send_message(chat_id=chat_id,text=msg)
 
 # schedule.every(30).minutes.do(drinkwater)
@@ -44,16 +42,27 @@ def shutdown():
 def stop(bot,update):
 	threading.Thread(target=shutdown).start()
 
+def start(update, context):
+	msg = "Hey baby! I'm still awake for you. Type /help for more commands."
+	context.bot.send_message(chat_id=chat_id,text=msg)
+
+def helpe(bot,update):
+	msg = "Hey sweetheart. Here's a list of commands for you:\n/start : to check if the bot is running.\n/woof : to get a surprise.\n/drink : to remind yourself to do something inportant.\n/help : to see the commands list.\n/stop : to stop the bot.\n"
+	bot.send_message(chat_id=chat_id,text=msg)
+
 def main():
 	dp = updater.dispatcher
 	dp.add_handler(CommandHandler('woof',bop))
 	dp.add_handler(CommandHandler('drink',drinkwater))
 	dp.add_handler(CommandHandler('stop', stop))
+	dp.add_handler(CommandHandler('start', start))
+	dp.add_handler(CommandHandler('help', helpe))
 	updater.start_polling()
 	updater.idle()
 	#drinkwater()
 
 updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU')
+chat_id = update.message.chat_id
 
 if __name__=='__main__':
 	main()
