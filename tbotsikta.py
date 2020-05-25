@@ -25,6 +25,10 @@ def startreminder(update,context):
 	context.bot.send_message(chat_id=update.message.chat_id,text='Starting the reminder to run every {} minute(s).'.format(timer/60))
 	context.job_queue.run_repeating(drinkrem,interval=timer,context=update.message.chat_id)
 
+def stoprem(context):
+	context.bot.send_message(chat_id=context.job.context,text="The reminder has been stopped, but don't forget to drink water, darling.")
+	context.job_queue.stop()
+
 # def settimer(update,context):
 # 	global timer
 # 	timin = ''.join(context.args)
@@ -66,10 +70,11 @@ def main():
 	dp.add_handler(CommandHandler('bae',bae))
 	#dp.add_handler(CommandHandler('settimer',settimer))
 	dp.add_handler(CommandHandler('reminder',startreminder))
+	dp.add_handler(CommandHandler('stopreminder',stoprem))
 	updater.start_polling()
 	updater.idle()
 	
-timer = 1800
+timer = 60 
 
 updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU',use_context=True)
 
