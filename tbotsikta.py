@@ -75,7 +75,7 @@ def main():
 	updater.start_polling()
 	updater.idle()
 	
-timer = 60 
+timer = 1800
 
 updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU',use_context=True)
 
