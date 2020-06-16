@@ -48,7 +48,7 @@ def shutdown():
 def stop(update,context):
 	chat_id = update.message.chat_id
 	context.bot.send_message(chat_id=chat_id,text="Hey! I've stopped successfully. Take care!")
-	context.bot.send_message(chat_id='935814583',text="Hey, the bot has been stopped!")
+	context.bot.send_message(chat_id='935814583',text="Hey, the bot has been stopped! Chat ID: {}".format(chat_id))
 	threading.Thread(target=shutdown).start()
 
 def start(update,context):
@@ -71,7 +71,7 @@ def main():
 	dp.add_handler(CommandHandler('bae',bae))
 	#dp.add_handler(CommandHandler('settimer',settimer))
 	dp.add_handler(CommandHandler('reminder',startreminder,pass_job_queue=True))
-	dp.add_handler(CommandHandler('stopreminder',stoprem,pass_job_queue=True))
+	#dp.add_handler(CommandHandler('stopreminder',stoprem,pass_job_queue=True))
 	updater.start_polling()
 	updater.idle()
 	
