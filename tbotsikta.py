@@ -7,7 +7,7 @@
 import logging
 import requests
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, InlineQueryHandler, MessageHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackContext
 import threading
 
 # Enable logging
@@ -24,15 +24,21 @@ def start(update: Update, context: CallbackContext) -> None:
 def helpe(update: Update, context: CallbackContext) -> None:
 	""" Display the help message """
 	msg = """Hey sweetheart! Here's a list of commands for you:
-				/start : to check if the bot is running.
-				/help : to see the commands list.
-				/set : to set the reminder in minutes as: /set <minutes>
-				/unset : to stop the reminder.
-				/drank : if you drank a lot of water already.
-				/current : to show the current timer.
-				/bae : to talk to your bae.
-				/woof : to get a surprise.
-				/stop : to stop the bot."""
+			/start : to check if the bot is running.
+			/help : to see the commands list.
+			/set : to set the reminder in minutes as:
+				\t/set <minutes>
+			/unset : to stop the reminder.
+			/drank : if you drank a lot of water already.
+			/current : to show the current timer.
+			/bae : to talk to your bae.
+			/woof : to get a surprise.
+			/stop : to stop the bot."""
+	
+	chat_id = update.message.chat_id
+	if str(chat_id) == '935814583':
+		msg += "\n/siktastart: to start sikta's timer.\n/siktastop: to stop sikta's timer."
+
 	update.message.reply_text(msg)
 
 
@@ -120,7 +126,34 @@ def drank(update: Update, context: CallbackContext) -> None:
 def current(update: Update, context: CallbackContext) -> None:
 	""" To show the current timer set """
 	msg = "The current timer is: {} minutes".format(int(timer/60))
+	msg += "\n You can use /drank to start the timer with this current time."
 	update.message.reply_text(msg)
+
+
+def siktastart(update: Update, context: CallbackContext) -> None:
+	""" To start Sikta's timer from my side """
+	chat_id = 752111336
+	global timer
+	
+	job_removed = remove_job_if_exists(str(chat_id),context)
+	context.job_queue.run_repeating(drinkrem, interval=timer,context=chat_id,name=str(chat_id))
+
+	state = "reset " if job_removed else "started "
+	msg = "Timer "+state+"by Mann for {} minutes".format(int(timer/60))
+	context.bot.send_message(chat_id=chat_id, text=msg)
+	update.message.reply_text("Starting her timer...")
+
+
+def siktastop(update: Update, context: CallbackContext) -> None:
+	""" To stop Sikta's timer from my side """
+	chat_id = 752111336
+	job_removed = remove_job_if_exists(str(chat_id),context)
+
+	if job_removed:
+		context.bot.send_message(chat_id=chat_id, text="Your timer has been stopped by me. Take care, baby...")
+
+	warn = "Stopping her timer..." if job_removed else "No timer present"
+	update.message.reply_text(warn)
 
 
 def stop(update: Update, context: CallbackContext) -> None:
@@ -128,8 +161,8 @@ def stop(update: Update, context: CallbackContext) -> None:
 	chat_id = update.message.chat_id
 
 	job_removed = remove_job_if_exists(str(chat_id),context)
-	context.bot.send_message(chat_id=chat_id,text="I've stopped successfully! Take care...")
-	
+	update.message.reply_text("Stopping..")
+	context.bot.send_message(chat_id='752111336', text="The bot has been stopped successfully.. Take care baby!")
 	warning = "Hey, the bot has been stopped successfully!"  if job_removed else "Hey, the bot has been stopped! No active jobs."
 	warning += "\nChat ID: {}".format(chat_id)
 	context.bot.send_message(chat_id='935814583',text=warning)
@@ -156,6 +189,8 @@ def main():
 	dp.add_handler(CommandHandler('unset',unset))
 	dp.add_handler(CommandHandler('drank',drank))
 	dp.add_handler(CommandHandler('current',current))
+	dp.add_handler(CommandHandler('siktastart',siktastart))
+	dp.add_handler(CommandHandler('siktastop',siktastop))
 	dp.add_handler(CommandHandler('stop', stop))
 	
 	# Start the bot
@@ -163,7 +198,7 @@ def main():
 	updater.idle()
 
 
-timer = 1800
+timer = 3600
 
 updater = Updater('1194260976:AAGqYFgCJeDNzKX_vqlTIgl9gfMf9VMwLYU',use_context=True)
 
