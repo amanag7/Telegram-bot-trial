@@ -9,6 +9,7 @@ import requests
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 import threading
+import re
 
 # Enable logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -37,21 +38,27 @@ def helpe(update: Update, context: CallbackContext) -> None:
 	
 	chat_id = update.message.chat_id
 	if str(chat_id) == '935814583':
-		msg += "\n/siktastart: to start sikta's timer.\n/siktastop: to stop sikta's timer."
+		msg += "\n/siktawoof: to send her cute doggos.\n/siktastart: to start sikta's timer.\n/siktastop: to stop sikta's timer."
 
 	update.message.reply_text(msg)
 
 
 def get_url():
 	""" Getting the different dog pictures using API """
-	contents = requests.get('https://random.dog/woof.json').json()    
-	url = contents['url']
+	contents = requests.get('https://dog.ceo/api/breeds/image/random').json()    
+	url = contents['message']
 	return url
 
 def bop(update: Update, context: CallbackContext) -> None:
 	""" Displaying cute dog pictures """
 	url=get_url()
 	chat_id = update.message.chat_id
+	context.bot.send_photo(chat_id=chat_id, photo=url)
+
+def siktabop(update: Update, context: CallbackContext) -> None:
+	""" Sending the dog pictures to Sikta """
+	url=get_url()
+	chat_id = 752111336
 	context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
@@ -189,6 +196,7 @@ def main():
 	dp.add_handler(CommandHandler('unset',unset))
 	dp.add_handler(CommandHandler('drank',drank))
 	dp.add_handler(CommandHandler('current',current))
+	dp.add_handler(CommandHandler('siktawoof',siktabop))
 	dp.add_handler(CommandHandler('siktastart',siktastart))
 	dp.add_handler(CommandHandler('siktastop',siktastop))
 	dp.add_handler(CommandHandler('stop', stop))
